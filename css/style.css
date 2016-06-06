@@ -1,0 +1,43 @@
+* { margin: 0; padding: 0; list-style: none; }
+.flexbox { display: -webkit-box; display: -webkit-flex; display: -ms-flexbox; display: flex; }
+.flexbox .box_col { -webkit-box-flex: 1; -webkit-flex: 1; -ms-flex: 1; flex: 1; }
+.box { padding: 1.25rem; }
+
+/*图表*/
+.chart_box { position: relative; height: 10rem; margin: 3rem 0 4rem; font-family: "PingFangSC-Regular"; line-height: 2; }
+.chart_box .nodata { line-height: 9em; text-align: center; }
+
+/*坐标*/
+.chart_box .chartY { position: absolute; height: 100%; left: 0; right: 0; bottom: 0; z-index: 1; }
+.chart_box .chartY li { position: absolute; left: 0; bottom: 0; right: 0; color: #999; font-size: 0.75rem; }
+.chart_box .chartY li::after { content: " "; position: absolute; left: 2rem; bottom: 0; right: 0; border-bottom: 1px dotted #e5e5e5; z-index: 9; }
+.chart_box .chartY li:nth-child(2) { bottom: 33.33%; }
+.chart_box .chartY li:nth-child(3) { bottom: 66.67%; }
+.chart_box .chartY li:nth-child(4) { bottom: 100%; }
+.chart_box .chartY li:nth-child(5) { bottom: 116%; }
+.chart_box .chartY li.title::after { border-bottom: 0; }
+.chart_box .chartY li span { position: absolute; line-height: 1.2em; left: 0; bottom: -0.6em; text-align: right; z-index: 10; }
+
+/*数据*/
+.chart_box .scroll { position: absolute; padding-bottom: 2rem; left: 2rem; right: 0; bottom: -2em; top: 0; z-index: 2; overflow: auto; font-size: 0.75rem; font-size: 0.75rem; }
+.chart_box .scroll::-webkit-scrollbar { display: none; }
+.chart_box .data_box,
+.chart_box .title_box { position: absolute; left: 0; bottom: 2em; top: 0; width: 100%; overflow: hidden; }
+.chart_box .title_box { top: auto; height: 2em; bottom: 0; font-size: 0.75rem; }
+.chart_box .chartX,
+.chart_box .chart_data { position: absolute; display: -webkit-box; display: -webkit-flex; display: -ms-flexbox; display: flex; left: 0; right: 0; bottom: 0; height: 100%; margin: 0 auto; z-index: 2; }
+.chart_box .chartX { bottom: 0; height: 2em; left: 0; border-bottom: 0; color: #999; font-size: 0.75rem; }
+.chart_box .chartX .chart_item,
+.chart_box .chart_data .chart_item { -webkit-box-flex: 1; -webkit-flex: 1; -ms-flex: 1; flex: 1; height: 100%; position: relative; text-align: center; }
+.chart_box .chartX.rotate .chart_item{-webkit-transform-origin:left center;transform-origin:left center;-webkit-transform: rotate(-10deg);transform: rotate(-10deg);}
+.chart_box .chart_data .chart_item::before { display: inline-block; content: " "; height: 100%; width: 0; vertical-align: bottom; }
+.chart_box .chart_data .choosed::after { position: absolute; content: " "; height: 100%; width: 1px; left: 50%; background: rgba(0, 0, 0, 0.8); -webkit-transform: translateX(-50%); transform: translateX(-50%); }
+.chart_box .chart_data .bar { display: inline-block; width: 0.75rem; background-color: #a9c0db; vertical-align: bottom; }
+.chart_box .chart_data .dot { position: absolute; width: 0.375rem; height: 0.375rem; background-color: #de6843; border-radius: 50%; left: 50%; margin-left: -0.1875rem; z-index: 2; }
+.chart_box .chart_data .line { position: absolute; height: 0.125rem; background-color: #de6843; top: 50%; left: 50%; margin: -0.0625rem 0 0 0; border-radius: 0.0625rem; -webkit-transform-origin: left center; transform-origin: left center; }
+.chart_box .colorB .dot { background-color: #39ac6a; }
+.chart_box .colorB .line { background-color: #39ac6a; }
+.chart_box .sign_box { position: absolute; bottom: -3.5rem; left: 2em; font-size: 0.75rem; z-index: 4; }
+.chart_box .sign { display: inline-block; width: 0.375rem; height: 0.375rem; border-radius: 50%; vertical-align: middle; }
+.chart_box .sign_txt { vertical-align: middle; padding: 0 0.625rem 0 0.3125rem; }
+.chart_box .tip { position: absolute; padding: 0.25rem 0.5rem; background: rgba(50, 50, 50, 0.8); color: #fff; border-radius: 0.25rem; font-size: 0.75rem; line-height: 1.5; white-space: nowrap; z-index: 99; }
