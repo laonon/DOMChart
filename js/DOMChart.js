@@ -116,6 +116,7 @@ function Chart(options) {
 			var tpl = '';
 			var len = data.count;
 			var unit = data.unit;
+			var MAXNUM = unitFn.getMax(data.type);
 			var max = data.min && data.min === 1 ? (MAXNUM - MINNUM) / len : MAXNUM / len;
 			var scale;
 			if (data.tofix) {
