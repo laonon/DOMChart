@@ -1,3 +1,4 @@
+//XXXXXXX
 var Chart = function (el, options) {
 	var el = $(el);
 	var container = el.find('.data_box')

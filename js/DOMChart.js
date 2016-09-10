@@ -1,6 +1,4 @@
-// exports.init = function(options) {
-function Chart(options) {
-
+var Chart = function(options) {
 	var myConfig = {
 		container: $(document.body), //图表容器
 		axisX: {
@@ -10,11 +8,13 @@ function Chart(options) {
 		},
 		axisY: {
 			has: true, //Y轴
-			// tofix: 1,
+			// tofix: 1, //保留小数点
+			// title: '',
 			min: 0,
 			unit: '',
 			count: 3,
 			title: ''
+				// type:
 		},
 		data: [], //渲染数据
 	};
@@ -38,6 +38,7 @@ function Chart(options) {
 		},
 		//获取高度
 		getHeight: function(max, x) {
+			if(max == 0) return 0;
 			var unitHeight = unitFn.getUnitHeight(max);
 			var h;
 			if (myConfig.axisY.min === 1) {
@@ -46,14 +47,15 @@ function Chart(options) {
 			} else {
 				h = x * unitHeight;
 			}
-
 			return h;
 		},
 		//获取间距
 		getDistance: function(len, x1, x2, max) {
 			var x = totalWidth / len;
 			var y = unitFn.getHeight(max, x1) - unitFn.getHeight(max, x2);
-
+			if(x1 == 0 && x2 == 0){
+				return x;
+			}
 			return Math.sqrt(x * x + y * y);
 		},
 		//获取角度
@@ -61,20 +63,20 @@ function Chart(options) {
 			var x = totalWidth / len;
 			var y = (x1 - x2) * unitFn.getUnitHeight(max);
 			var z = Math.sqrt(x * x + y * y);
-			var rotat = Math.round((Math.asin(y / z) / Math.PI * 180)); //得到的角度
+			var rotate = Math.asin(y / z) / Math.PI * 180; //得到的角度
 
-			return rotat;
+			return rotate;
 		},
 		//获取最大值
 		getMax: function(type) {
 			var arr = [];
 			for (var i = 0, len = myConfig.data.length; i < len; i++) {
 
-				if(myConfig.data[i].type === type){
+				if (myConfig.data[i].type === type) {
 					arr.push.apply(arr, myConfig.data[i].data);
 				}
-				
-				if(type === undefined){
+
+				if (type === undefined) {
 					arr.push.apply(arr, myConfig.data[i].data);
 				}
 
@@ -102,11 +104,6 @@ function Chart(options) {
 					return Array.min(arr) * 0.98;
 				}
 			}
-		},
-		//获取添加模板的宽度
-		getWidth: function(tpl) {
-			var container = $(document.body);
-			return $(tpl).appendTo(container).css({'position':'absolute'}).width();
 		}
 	};
 
@@ -119,23 +116,24 @@ function Chart(options) {
 			var MAXNUM = unitFn.getMax(data.type);
 			var max = data.min && data.min === 1 ? (MAXNUM - MINNUM) / len : MAXNUM / len;
 			var scale;
-			if (data.tofix) {
-				scale = max.toFixed(data.tofix);
+			var tofix = data.tofix;
+			if (tofix) {
+				scale = max.toFixed(tofix);
 			} else {
 				scale = Math.round(max);
 			}
-			var title = data.title;
+
 			if (data.min && data.min === 1) { //Y轴坐标不从0开始
 				var minY = MINNUM;
 				for (var i = 0; i <= len; i++) {
 					var curUnit = MINNUM + scale * i;
-					if (data.tofix) {
-						curUnit = curUnit.toFixed(data.tofix);
+					if (tofix) {
+						curUnit = curUnit.toFixed(tofix);
 					}
 					tpl += '<li><span>' + curUnit + unit + '</span></li>';
 					if (i === len) {
-						if (title) {
-							tpl += '<li><span>' + title + '</span></li>';
+						if (data.title && data.title !== '') {
+							tpl += '<li class="title"><span>' + data.title + '</span></li>';
 						}
 						return tpl;
 					}
@@ -143,13 +141,13 @@ function Chart(options) {
 			} else {
 				for (var i = 0; i <= len; i++) {
 					var curUnit = scale * i;
-					if (data.tofix) {
-						curUnit = curUnit.toFixed(data.tofix);
+					if (tofix) {
+						curUnit = curUnit.toFixed(tofix);
 					}
 					tpl += '<li><span>' + curUnit + unit + '</span></li>';
 					if (i === len) {
-						if (title) {
-							tpl += '<li class="title"><span>' + title + '</span></li>';
+						if (data.title) {
+							tpl += '<li class="title"><span>' + data.title + '</span></li>';
 						}
 						return tpl;
 					}
@@ -162,7 +160,6 @@ function Chart(options) {
 			var tpl = '';
 			for (var i = 0; i < len; i++) {
 				tpl += '<li class="chart_item">' + data[i] + '</li>';
-				// var w = unitFn.getWidth(tpl);
 				if (i === len - 1) {
 					return tpl;
 				}
@@ -172,13 +169,14 @@ function Chart(options) {
 		addBar: function(data) {
 			var len = data.data.length;
 			var max = unitFn.getMax(data.type);
-			console.log('barmax:'+max);
+			// console.log('barmax:'+max);
 			for (var i = 0; i < len; i++) {
-				var curHeight = unitFn.getHeight(max, data.data[i]);
+				var curData = data.data[i] || 0;
+				var curHeight = unitFn.getHeight(max, curData);
 				if (barArr[i] === undefined) {
 					barArr[i] = '';
 				}
-				var tpl = '<span class="bar" data-info="' + data.title + ':' + data.data[i] + data.unit + '" style="background-color:' + data.color + ';height:' + curHeight + 'px;"></span>';
+				var tpl = '<span class="bar" data-info="' + data.title + ':' + curData + data.unit + '" style="background-color:' + data.color + ';height:' + curHeight + 'px;"></span>';
 				barArr[i] += tpl;
 			}
 		},
@@ -186,19 +184,21 @@ function Chart(options) {
 		addLine: function(data) {
 			var len = data.data.length;
 			var max = unitFn.getMax(data.type);
-			console.log('linemax:'+max);
+			// console.log('linemax:'+max);
 			for (var i = 0; i < len; i++) {
-				var curHeight = unitFn.getHeight(max, data.data[i]);
+				var curData = data.data[i] || 0;
+				var nextData = data.data[i + 1] || 0;
+				var curHeight = unitFn.getHeight(max, curData);
 				var tpl = '';
 				if (lineArr[i] === undefined) {
 					lineArr[i] = '';
 				}
 				if (i === len - 1) {
-					tpl = '<span class="dot" data-info="' + data.title + ':' + data.data[i] + data.unit + '" style="background-color:' + data.color + ';bottom:' + curHeight + 'px;"></span>';
+					tpl = '<span class="dot" data-info="' + data.title + ':' + curData + data.unit + '" style="background-color:' + data.color + ';bottom:' + curHeight + 'px;"></span>';
 				} else {
-					var curDeg = unitFn.getAngle(len, data.data[i], data.data[i + 1], max);
-					var curWidth = unitFn.getDistance(len, data.data[i], data.data[i + 1], max);
-					tpl = '<span class="dot" data-info="' + data.title + ':' + data.data[i] + data.unit + '" style="background-color:' + data.color + ';bottom:' + curHeight + 'px;">' +
+					var curDeg = unitFn.getAngle(len, curData, nextData, max);
+					var curWidth = unitFn.getDistance(len, curData, nextData, max);
+					tpl = '<span class="dot" data-info="' + data.title + ':' + curData + data.unit + '" style="background-color:' + data.color + ';bottom:' + curHeight + 'px;">' +
 						'<span class="line" style="background-color:' + data.color + ';-webkit-transform: rotate(' + curDeg + 'deg);transform: rotate(' + curDeg + 'deg);width: ' + curWidth + 'px;"></span></span>';
 				}
 				lineArr[i] += tpl;
@@ -207,7 +207,7 @@ function Chart(options) {
 		//添加标识
 		addSign: function(data) {
 			// var unit = data.unit ? '(' + data.unit + ')' : '';
-			var tpl = '<i class="sign" style="background:' + data.color + ';"></i><span class="sign_txt">' + data.title + '</span>';
+			var tpl = '<span class="sign_item"><i class="sign ' + data.type + '" style="background:' + data.color + ';"></i><span class="sign_txt">' + data.title + '</span></span>';
 			titleArr.push(tpl);
 		},
 		//点击显示当前信息
@@ -219,7 +219,8 @@ function Chart(options) {
 
 			var str = '';
 			for (var i = 0, len = nodes.length; i < len; i++) {
-				str += nodes.eq(i).attr('data-info') + '<br>';
+				var arrTip = nodes.eq(i).attr('data-info').split(':');
+				str += '<em>' + arrTip[0] + '：</em><span>' + arrTip[1] + '</span>' + '<br>';
 			}
 			if (tip.length > 0) {
 				tip.html(str);
@@ -241,13 +242,13 @@ function Chart(options) {
 				top: y + 'px'
 			});
 
-			timer && clearTimeout(timer);
-			var timer = setTimeout(function() {
-				$(_this).removeClass('choosed');
-				tip && tip.remove();
-				clearTimeout(timer);
-				timer = null;
-			}, 5000);
+			$(document).on('tap', function(event) {
+				var target = $(event.target);
+				if (!target.is('.chart_box') && target.closest('.chart_box').length < 1) {
+					$(_this).removeClass('choosed');
+					tip && tip.remove();
+				}
+			});
 		}
 	};
 
@@ -279,7 +280,7 @@ function Chart(options) {
 			}
 			var ratio = (maxLength <= 6 || !cfg.axisX.scroll) ? 1 : maxLength / 6;
 			var scrollWidth = Math.round(ratio * 100);
-			totalWidth = container.width() * ratio - parseInt($(document.documentElement).css('font-size')) * 2;
+			totalWidth = (container.width() - parseInt($(document.documentElement).css('font-size')) * 2)*scrollWidth/100;
 			totalHeight = container.height();
 
 			MAXNUM = unitFn.getMax();
@@ -298,12 +299,16 @@ function Chart(options) {
 			for (var i = 0, len = cfg.data.length; i < len; i++) {
 				var curData = cfg.data[i];
 
-				// if (len > 1) {
-				eventHandle.addSign(curData);
-				container.css({
-					margin: '2rem 0 4rem'
-				});
-				// }
+				if (len > 1 || cfg.axisY.title == '') {
+					eventHandle.addSign(curData);
+					container.css({
+						margin: '2rem 0 4rem'
+					});
+				} else {
+					container.css({
+						margin: '3rem 0 2rem'
+					});
+				}
 				switch (curData.type) {
 					case 'bar':
 						eventHandle.addBar(curData);
@@ -349,5 +354,4 @@ function Chart(options) {
 	pub.add = function(options) {};
 
 	return pub;
-}
-// };
+};

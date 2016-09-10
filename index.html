@@ -1,65 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta charset="UTF-8">
-	<title>数据图表</title>
-	<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-	<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <title>数据图表</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="css/style.css">
+    <style type="text/css">
+        body {
+            padding: 2rem 1rem 0;
+        }
+    </style>
 </head>
+
 <body>
 
-	<div class="chart_box" id="chart_box">
-		<div class="nodata">暂无数据</div>
-	</div>
+    <div class="chart_box" id="chart_box">
+        <div class="nodata">暂无数据</div>
+    </div>
 
 </body>
 <script type="text/javascript" src="js/zepto.min.js"></script>
 <script type="text/javascript" src="js/DOMChart.js"></script>
 <script>
-	var myChart = Chart({
-		container: $('#chart_box'),
-		axisX: {
-			has:true, //X轴
-			scroll: true,
-			data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
-		},
-		// axisY: {
-		// 	has: true, //Y轴
-		// 	tofix: 1,
-		// 	max: 0,
-		// 	min: 0,
-		// 	unit: '万',
-		// 	count: 3,
-		// 	// title: '',
-		// 	type: 'line'
-		// },
-		data: [{
-			data: [180,170,170.50,180,190,170.5,180,190,170,180,190,160],
-			title: '成交量/套',
-			unit: '套',
-			type: 'bar', //目前只有bar/line
-			color: '#a9c0db' //设置色值
-		},
-		{
-			data: [190,180.5,170.8,170,180.8,170.8,190,190,160,190,180,160],
-			title: '挂牌量/套',
-			unit: '套',
-			type: 'bar', //目前只有bar/line
-			color: '#adb' //设置色值
-		},{
-			data: [18,18,16.5,19,18,17,18,19,16,18,17,16],
-			title: '挂牌均价',
-			unit: '万',
-			type: 'line', //目前只有bar/line
-			color: '#f70' //设置色值
-		},{
-			data: [19,18,17,18.5,19,16,19,18,17,19,19,16],
-			title: '成交均价',
-			unit: '万',
-			type: 'line', //目前只有bar/line
-			color: '#00ae66' //设置色值
-		}]
-	});
-
+    var myChart = Chart({
+        container: $('#chart_box'),
+        axisX: {
+            has: true, //X轴
+            data: [1, 2, 3, 4, 5, 6]
+        },
+        axisY: {
+            has: true, //Y轴
+            tofix: 6,
+            // max: 0,
+            min: 1,
+            unit: '',
+            count: 3,
+            title: '均价（万元/平米）'
+        },
+        data: [{
+            type: 'line',
+            unit: '万元/平米',
+            data: [0.8, 0.8, 0.8, 0.8, 0.8, 0.8],
+            title: '均价',
+            color: '#00ae66'
+        }]
+    });
 </script>
+
 </html>
